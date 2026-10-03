@@ -14,7 +14,7 @@ public class Config
 
     public class JiraCfg { public string Mode { get; set; } = "file"; public string CardsFile { get; set; } = "cards.csv"; public string BaseUrl { get; set; } = ""; public string ReadyStatus { get; set; } = "Ready for Deployment"; public string ProjectKey { get; set; } = ""; }
     public class GitCfg { public string RemoteUrl { get; set; } = ""; public string Branch { get; set; } = "qa"; public string CacheDir { get; set; } = "./.gitcache"; public string RepoPath { get; set; } = "."; }
-    public class MapRule { public string Prefix { get; set; } = ""; public string Target { get; set; } = ""; }
+    public class MapRule { public string Prefix { get; set; } = ""; public string Target { get; set; } = ""; public string ProdPath { get; set; } = ""; }
 
     public static Config Load(string path = "appsettings.json") =>
         JsonSerializer.Deserialize<Config>(File.ReadAllText(path), new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
