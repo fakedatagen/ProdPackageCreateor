@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">🚫 Banned Accounts</h2>
+
+{% if accounts %}
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Platform</th>
+                        <th>Account Name</th>
+                        <th>Username</th>
+                        <th>Rank</th>
+                        <th>Ban Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.id }}</td>
+                        <td>{{ account.email }}</td>
+                        <td><span class="badge bg-info">{{ account.platform }}</span></td>
+                        <td>{{ account.account_name or '-' }}</td>
+                        <td>{{ account.username or '-' }}</td>
+                        <td>{{ account.rank or '-' }}</td>
+                        <td>{{ account.ban_date or '-' }}</td>
+                        <td>
+                            <a href="{{ url_for('view_account', account_id=account.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <form method="POST" action="{{ url_for('activate_account', account_id=account.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i> Activate
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-success">
+    <i class="fas fa-check-circle"></i> No banned accounts! All accounts are in good standing.
+</div>
+{% endif %}
+
+<div class="mt-3">
+    <a href="{{ url_for('accounts') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to All Accounts
+    </a>
+</div>
+{% endblock %}

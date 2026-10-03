@@ -1,0 +1,15 @@
+D:\Git Deployment\files\obj\Debug\net8.0\ReleasePackager.GeneratedMSBuildEditorConfig.editorconfig
+D:\Git Deployment\files\obj\Debug\net8.0\ReleasePackager.AssemblyInfoInputs.cache
+D:\Git Deployment\files\obj\Debug\net8.0\ReleasePackager.AssemblyInfo.cs
+D:\Git Deployment\files\obj\Debug\net8.0\ReleasePackager.csproj.CoreCompileInputs.cache
+D:\Git Deployment\files\bin\Debug\net8.0\appsettings.json
+D:\Git Deployment\files\bin\Debug\net8.0\ReleasePackager.exe
+D:\Git Deployment\files\bin\Debug\net8.0\ReleasePackager.deps.json
+D:\Git Deployment\files\bin\Debug\net8.0\ReleasePackager.runtimeconfig.json
+D:\Git Deployment\files\bin\Debug\net8.0\ReleasePackager.dll
+D:\Git Deployment\files\bin\Debug\net8.0\ReleasePackager.pdb
+D:\Git Deployment\files\obj\Debug\net8.0\ReleasePackager.dll
+D:\Git Deployment\files\obj\Debug\net8.0\refint\ReleasePackager.dll
+D:\Git Deployment\files\obj\Debug\net8.0\ReleasePackager.pdb
+D:\Git Deployment\files\obj\Debug\net8.0\ReleasePackager.genruntimeconfig.cache
+D:\Git Deployment\files\obj\Debug\net8.0\ref\ReleasePackager.dll

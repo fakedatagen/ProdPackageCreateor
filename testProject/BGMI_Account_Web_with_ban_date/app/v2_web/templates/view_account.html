@@ -1,0 +1,178 @@
+{% extends "base.html" %} {% block content %}
+<div class="cyber-card">
+    <div class="card-header" style="background: rgba(0, 255, 157, 0.1); border-bottom: 1px solid #00ff9d;">
+        <h4 class="mb-0 glow-text">
+            <i class="fas fa-user-secret"></i> ACCOUNT DETAILS #{{
+ account.id }}
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-borderless" style="color: #e0e0e0;">
+                    <tr>
+                        <th width="30%" style="color: #00ff9d;">📧 EMAIL:</th>
+                        <td><code style="color: #00d4ff;">{{ account.email }}</code></td>
+                    </tr>
+                    <tr>
+                        <th style="color: #00ff9d;">🔧 PLATFORM:</th>
+                        <td><span class="badge" style="background: rgba(0, 255, 157, 0.2); color: #00ff9d;">{{ account.platform.upper() }}</span></td>
+                    </tr>
+                    <tr style="background: rgba(0, 255, 157, 0.05);">
+                        <th style="color: #ffaa00;">🔑 BGMI USER ID:</th>
+                        <td>
+                            {% if account.platform_id %}
+                            <code style="color: #ffaa00; font-size: 1.2rem;">{{ account.platform_id }}</code>
+                            <button class="btn btn-sm btn-cyber" onclick="copyToClipboard('{{ account.platform_id }}')" style="margin-left: 10px;">
+                                <i class="fas fa-copy"></i> COPY
+                            </button>
+                            {% else %}
+                            <span style="color: #8892b0;">NOT SET</span> {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="color: #00ff9d;">👤 ACCOUNT NAME:</th>
+                        <td>{{ account.account_name or '-' }}</td>
+                    </tr>
+                    <tr style="background: rgba(255, 51, 102, 0.1);">
+                        <th style="color: #ff3366;">📊 STATUS:</th>
+                        <td><span class="status-badge status-{{ account.status }}">{{ account.status.upper() }}</span> {% if account.status == 'banned' and account.ban_date %}
+                            <span style="color: #ffaa00; margin-left: 10px;">
+                                <i class="fas fa-calendar"></i> BAN UNTIL: {{ account.ban_date }}
+                            </span> {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="color: #00ff9d;">🎮 USERNAME:</th>
+                        <td><code>{{ account.username or '-' }}</code></td>
+                    </tr>
+                    <tr>
+                        <th style="color: #ffaa00;">🏆 RANK:</th>
+                        <td>
+                            {% if account.rank %}
+                            <span style="color: #ffaa00; font-weight: bold;">{{ account.rank.upper() }}</span> {% else %} - {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="color: #00d4ff;">⭐ MERIT SCORE:</th>
+                        <td><span style="color: #00d4ff; font-weight: bold;">{{ account.merit or 0 }}</span></td>
+                    </tr>
+                    <tr>
+                        <th style="color: #ff3366;">BAN DATE / UNTIL:</th>
+                        <td>{{ account.ban_date or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th style="color: #00ff9d;">💬 COMMENT:</th>
+                        <td>{{ account.comment or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th style="color: #00ff9d;">📅 CREATED:</th>
+                        <td>{{ account.created_at.strftime('%Y-%m-%d %H:%M:%S') if account.created_at else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th style="color: #00ff9d;">📅 UPDATED:</th>
+                        <td>{{ account.updated_at.strftime('%Y-%m-%d %H:%M:%S') if account.updated_at else '-' }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-md-4">
+                <div class="cyber-card p-3 text-center">
+                    <i class="fas fa-qrcode" style="font-size: 3rem; color: #00ff9d;"></i>
+                    <h5 class="mt-2">BGMI ID CARD</h5>
+                    <hr style="border-color: #00ff9d;">
+                    <p class="terminal-text small">
+                        🆔 ID: {{ account.id }}
+                        <br> 🎮 IGN: {{ account.username or 'N/A' }}
+                        <br> 🔑 UID: {{ account.platform_id or 'N/A' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('edit_account', account_id=account.id) }}" class="btn btn-cyber-warning">
+                <i class="fas fa-edit"></i> EDIT ACCOUNT
+            </a>
+
+            {% if account.status != 'banned' %}
+            <button type="button" class="btn btn-cyber-danger" data-bs-toggle="modal" data-bs-target="#banModal">
+                <i class="fas fa-skull"></i> BAN ACCOUNT
+            </button>
+            {% else %}
+            <form method="POST" action="{{ url_for('activate_account', account_id=account.id) }}" style="display: inline;">
+                <button type="submit" class="btn btn-cyber">
+                    <i class="fas fa-check-circle"></i> ACTIVATE
+                </button>
+            </form>
+            {% endif %}
+
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="fas fa-trash"></i> DELETE
+            </button>
+
+            <a href="{{ url_for('accounts') }}" class="btn btn-secondary">🔙 BACK</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            alert('✅ BGMI User ID copied: ' + text);
+        });
+    }
+</script>
+
+<!-- Ban Modal -->
+<div class="modal fade cyber-modal" id="banModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom: 1px solid #ff3366;">
+                <h5 class="modal-title" style="color: #ff3366;">🚫 BAN ACCOUNT</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
+            </div>
+            <form method="POST" action="{{ url_for('ban_account', account_id=account.id) }}">
+                <div class="modal-body">
+                    <p>⚠️ Are you sure you want to ban this account?</p>
+                    <p><strong>📧 Email:</strong> {{ account.email }}</p>
+                    <p><strong>🔑 BGMI User ID:</strong> {{ account.platform_id or 'N/A' }}</p>
+                    <div class="mb-3">
+                        <label for="ban_date" class="form-label">Ban Date / Until:</label>
+                        <input type="text" class="form-control cyber-input" id="ban_date" name="ban_date" placeholder="e.g., 2036 or 2026-12-31">
+                        <small class="text-muted">Enter the date/year until the account is banned</small>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #ff3366;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                    <button type="submit" class="btn btn-danger">🚫 BAN ACCOUNT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade cyber-modal" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom: 1px solid #ff3366;">
+                <h5 class="modal-title" style="color: #ff3366;">🗑️ DELETE ACCOUNT</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
+            </div>
+            <form method="POST" action="{{ url_for('delete_account', account_id=account.id) }}">
+                <div class="modal-body">
+                    <p class="text-danger">⚠️ DANGER: This action cannot be undone!</p>
+                    <p>Are you sure you want to delete this account?</p>
+                    <p><strong>📧 Email:</strong> {{ account.email }}</p>
+                    <p><strong>🔑 BGMI User ID:</strong> {{ account.platform_id or 'N/A' }}</p>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #ff3366;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                    <button type="submit" class="btn btn-danger">🗑️ DELETE PERMANENTLY</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

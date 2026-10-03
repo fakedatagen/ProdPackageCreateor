@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="cyber-card p-4 mb-4">
+    <h2 class="glow-text mb-0">
+        <i class="fas fa-chart-line"></i> SYSTEM_DASHBOARD
+    </h2>
+    <p class="text-muted mt-2">Real-time account monitoring | BGMI BattleGrounds Mobile India</p>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-database" style="color: #00ff9d;"></i>
+            <h3>{{ total }}</h3>
+            <p class="text-muted">TOTAL_ACCOUNTS</p>
+            <small class="terminal-text">[DATABASE_RECORDS]</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-check-circle" style="color: #00ff9d;"></i>
+            <h3>{{ active }}</h3>
+            <p class="text-muted">ACTIVE_ACCOUNTS</p>
+            <small class="terminal-text">[OPERATIONAL]</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-skull" style="color: #ff3366;"></i>
+            <h3>{{ banned }}</h3>
+            <p class="text-muted">BANNED_ACCOUNTS</p>
+            <small class="terminal-text">[RESTRICTED]</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-ghost" style="color: #8892b0;"></i>
+            <h3>{{ na }}</h3>
+            <p class="text-muted">INACTIVE_ACCOUNTS</p>
+            <small class="terminal-text">[AWAITING_CREATION]</small>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="cyber-card">
+            <div class="card-header" style="background: rgba(0, 255, 157, 0.1); border-bottom: 1px solid #00ff9d;">
+                <h5 class="mb-0 terminal-text">
+                    <i class="fas fa-clock"></i> RECENT_ACTIVITY
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table cyber-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>EMAIL</th>
+                                <th>PLATFORM</th>
+                                <th>STATUS</th>
+                                <th>RANK</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for account in recent_accounts %}
+                            <tr>
+                                <td class="terminal-text">{{ account.email[:35] }}{% if account.email|length > 35 %}...{% endif %}</td>
+                                <td><span class="badge" style="background: rgba(0, 255, 157, 0.2); color: #00ff9d;">{{ account.platform.upper() }}</span></td>
+                                <td><span class="status-badge status-{{ account.status }}">{{ account.status }}</span></td>
+                                <td class="terminal-text">{{ account.rank.upper() if account.rank else '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="cyber-card">
+            <div class="card-header" style="background: rgba(0, 255, 157, 0.1); border-bottom: 1px solid #00ff9d;">
+                <h5 class="mb-0 terminal-text">
+                    <i class="fas fa-chart-pie"></i> PLATFORM_DISTRIBUTION
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="platformChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const platformCtx = document.getElementById('platformChart').getContext('2d');
+    new Chart(platformCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ platform_data.keys()|list|tojson }},
+            datasets: [{
+                data: {{ platform_data.values()|list|tojson }},
+                backgroundColor: ['#00ff9d', '#00d4ff', '#ff3366'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#e0e0e0',
+                        font: { family: 'Share Tech Mono' }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

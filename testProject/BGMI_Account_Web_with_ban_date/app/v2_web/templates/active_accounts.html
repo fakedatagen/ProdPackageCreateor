@@ -1,0 +1,122 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="mb-4">✅ Active Accounts</h2>
+<p class="text-muted">Accounts that are currently active and ready to use.</p>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="search" placeholder="Search by email, name or username" value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" name="platform">
+                    <option value="">All Platforms</option>
+                    <option value="gmail" {% if platform=='gmail' %}selected{% endif %}>Gmail</option>
+                    <option value="twitter" {% if platform=='twitter' %}selected{% endif %}>Twitter</option>
+                    <option value="facebook" {% if platform=='facebook' %}selected{% endif %}>Facebook</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ url_for('active_accounts') }}" class="btn btn-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Accounts Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Platform</th>
+                        <th>Account Name</th>
+                        <th>Username</th>
+                        <th>Rank</th>
+                        <th>Actions</th>
+                        <th>Merit/th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr class="table-success">
+                        <td>{{ account.id }}</td>
+                        <td>{{ account.email }}</td>
+                        <td><span class="badge bg-info">{{ account.platform }}</span></td>
+                        <td>{{ account.account_name or '-' }}</td>
+                        <td>{{ account.username or '-' }}</td>
+                        <td>
+                            {% if account.rank %}
+                            <span class="badge bg-warning">{{ account.rank.upper() }}</span> {% else %} - {% endif %}
+                        </td>
+                        <td>
+                            <span style="color: #00d4ff; font-weight: bold;">{{ account.merit or 0 }}</span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('view_account', account_id=account.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('edit_account', account_id=account.id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#banModal{{ account.id }}">
+                                <i class="fas fa-ban"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Ban Modal for each account -->
+                    <div class="modal fade" id="banModal{{ account.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title">Ban Account</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="POST" action="{{ url_for('ban_account', account_id=account.id) }}">
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to ban this account?</p>
+                                        <p><strong>Email:</strong> {{ account.email }}</p>
+                                        <div class="mb-3">
+                                            <label class="form-label">Ban Date / Until (optional):</label>
+                                            <input type="text" class="form-control" name="ban_date" placeholder="e.g., 2036 or 2026-12-31">
+                                            <small class="text-muted">Enter the date/year until the account is banned</small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-danger">Ban Account</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <nav>
+            <ul class="pagination">
+                {% if pagination.has_prev %}
+                <li class="page-item"><a class="page-link" href="?page={{ pagination.prev_num }}&platform={{ platform }}&search={{ search }}">Previous</a></li>
+                {% endif %} {% for page in pagination.iter_pages() %} {% if page %}
+                <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                    <a class="page-link" href="?page={{ page }}&platform={{ platform }}&search={{ search }}">{{ page }}</a>
+                </li>
+                {% endif %} {% endfor %} {% if pagination.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ pagination.next_num }}&platform={{ platform }}&search={{ search }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
